@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Prediction Result</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin:0; background:#071426; color:#e6f0ff; }
+      .container { max-width:900px; margin:40px auto; padding:20px; }
+      .card { background:rgba(255,255,255,0.04); border-radius:12px; padding:20px; display:flex; gap:24px; }
+      img.preview { max-width:380px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); }
+      .badge { display:inline-block; padding:6px 10px; border-radius:999px; font-size:0.85rem; font-weight:bold; }
+      .badge-ok { background:#1f8b4c; }
+      .badge-alert { background:#d64545; }
+      .badge-severity-low { background:#f59e0b; color:#fff; }
+      .badge-severity-moderate { background:#f97316; color:#fff; }
+      .badge-severity-high { background:#dc2626; color:#fff; }
+      .badge-severity-na { background:#64748b; color:#fff; }
+      .label { font-weight:bold; }
+      a { color:#bcd9ff; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Prediction Result</h1>
+
+      <div class="card">
+        <div>
+          <h3>Input X-ray</h3>
+          <img class="preview" src="{{ img_path }}" alt="Uploaded X-ray">
+        </div>
+
+        <div>
+          <p class="label">Pneumonia present?</p>
+          {% if has_pneumonia %}
+            <p><span class="badge badge-alert">YES – Pneumonia detected</span></p>
+          {% else %}
+            <p><span class="badge badge-ok">NO – Likely normal</span></p>
+          {% endif %}
+
+          <p class="label" style="margin-top:12px;">Predicted class:</p>
+          <p style="font-size:1.1rem; color:#60a5fa;">{{ result }}</p>
+
+          <p class="label" style="margin-top:12px;">Pneumonia type:</p>
+          <p style="font-size:1.1rem; color:#60a5fa;">{{ pneumonia_type }}</p>
+
+          {% if has_pneumonia %}
+          <p class="label" style="margin-top:12px;">Severity:</p>
+          {% if severity == "High" %}
+            <p><span class="badge badge-severity-high">{{ severity }} Severity</span></p>
+          {% elif severity == "Moderate" %}
+            <p><span class="badge badge-severity-moderate">{{ severity }} Severity</span></p>
+          {% elif severity == "Low" %}
+            <p><span class="badge badge-severity-low">{{ severity }} Severity</span></p>
+          {% else %}
+            <p><span class="badge badge-severity-na">{{ severity }}</span></p>
+          {% endif %}
+          {% endif %}
+
+          <p class="label" style="margin-top:12px;">Model confidence:</p>
+          <p>{{ (confidence * 100) | round(2) }}%</p>
+
+          <p class="label" style="margin-top:12px;">Inference (explanation):</p>
+          <p>{{ inference }}</p>
+
+          <p style="margin-top:18px;">
+            <a href="/">Try another image</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

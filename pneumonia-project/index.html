@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pneumonia Detection</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; background:#020617; color:#e5e7eb; margin:0; padding:20px; }
+      .container { max-width:600px; margin:0 auto; padding:24px; background:rgba(15,23,42,0.95); border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
+      h1 { margin-top:0; color:#e5e7eb; }
+      p { color:#9ca3af; line-height:1.6; }
+      .form-group { margin:20px 0; }
+      label { display:block; margin-bottom:8px; color:#e5e7eb; font-weight:bold; }
+      input[type=file] { 
+        width:100%; 
+        padding:10px; 
+        margin:8px 0; 
+        color:#e5e7eb; 
+        background:rgba(255,255,255,0.05);
+        border:1px solid rgba(255,255,255,0.1);
+        border-radius:6px;
+        cursor:pointer;
+      }
+      input[type=file]:hover {
+        background:rgba(255,255,255,0.08);
+      }
+      button { 
+        padding:12px 24px; 
+        border-radius:6px; 
+        border:none; 
+        background:#2563eb; 
+        color:#fff; 
+        cursor:pointer;
+        font-size:16px;
+        font-weight:bold;
+        width:100%;
+        margin-top:10px;
+      }
+      button:hover { background:#1d4ed8; }
+      button:disabled { background:#64748b; cursor:not-allowed; }
+      .preview { margin-top:15px; max-width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.1); }
+      .info { background:rgba(59,130,246,0.1); padding:12px; border-radius:8px; margin-top:15px; border-left:3px solid #3b82f6; font-size:0.9rem; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔬 Pneumonia Classification</h1>
+      <p>Upload a chest X-ray image to predict whether the patient has pneumonia and determine the type (Bacterial, Viral, COVID-19, Fungal, or Normal).</p>
+
+      <form id="uploadForm" action="/predict" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="file">Choose X-ray image:</label>
+          <input type="file" id="file" name="file" accept="image/png,image/jpeg,image/jpg,image/gif" required>
+        </div>
+        <button type="submit" id="submitBtn">🔍 Predict Pneumonia</button>
+      </form>
+
+      <div id="preview" style="display:none;">
+        <h3 style="margin-top:20px;">Preview:</h3>
+        <img id="previewImg" class="preview" src="" alt="Preview">
+      </div>
+
+      <div class="info">
+        <strong>Supported formats:</strong> PNG, JPG, JPEG, GIF<br>
+        <strong>Dataset location:</strong> Navigate to <code>dataset/train</code> or <code>dataset/test</code> folders to select images.
+      </div>
+    </div>
+
+    <script>
+      // Preview image before upload
+      document.getElementById('file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('preview').style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Show loading state on form submit
+      document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0];
+        
+        // Debug logging
+        console.log('Form submitting...');
+        console.log('File selected:', file ? file.name : 'NO FILE');
+        console.log('File size:', file ? file.size : 'N/A');
+        console.log('Form method:', this.method);
+        console.log('Form action:', this.action);
+        console.log('Form enctype:', this.enctype);
+        
+        if (!file) {
+          e.preventDefault();
+          alert('Please select an image file first!');
+          return false;
+        }
+        
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Processing...';
+        
+        // Form will submit normally
+        return true;
+      });
+    </script>
+  </body>
+</html>
